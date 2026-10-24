@@ -93,7 +93,7 @@ function drawSignature(p, palette) {
   p.textSize(11);
   p.textAlign(p.CENTER, p.BOTTOM);
   p.drawingContext.globalAlpha = 0.45;
-  p.text('kai patel', p.width / 2, p.height - 48);
+  p.text('Indigo Wolf-Garraway', p.width / 2, p.height - 14);
   p.drawingContext.globalAlpha = 1;
 }
 
