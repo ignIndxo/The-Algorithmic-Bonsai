@@ -1,4 +1,4 @@
-import { stampLeaf, stampBlossom } from './sprites.js';
+import { stampLeaf, stampBlossom, stampMoss } from './sprites.js';
 
 function drawPixelLine(p, len, color, weight) {
   p.stroke(color);
@@ -7,26 +7,29 @@ function drawPixelLine(p, len, color, weight) {
   p.translate(0, -len);
 }
 
-export function drawLSystem(p, sentence, angle, palette) {
+// Draw up to `limit` symbols from sentence. Returns total symbol count so
+// the caller can advance the cursor each frame for incremental growth.
+export function drawLSystem(p, sentence, angle, palette, limit = Infinity) {
   p.push();
   p.translate(p.width / 2, p.height - 40);
 
-  // Scale line length so deeper trees still fit the canvas
   const len = 220 / Math.max(sentence.length, 1) ** 0.45;
 
   let depth = 0;
   let maxDepth = 1;
-
-  // First pass: measure max stack depth for taper calculation
   for (const ch of sentence) {
     if (ch === '[') { depth++; maxDepth = Math.max(maxDepth, depth); }
     else if (ch === ']') depth--;
   }
 
   depth = 0;
+  let drawn = 0;
 
   for (const ch of sentence) {
-    const weight = Math.max(1, 4 - (depth / maxDepth) * 3);
+    if (drawn >= limit) break;
+    drawn++;
+
+    const weight      = Math.max(1, 4 - (depth / maxDepth) * 3);
     const branchColor = depth < maxDepth * 0.4 ? palette.branch : palette.branchLt;
 
     switch (ch) {
@@ -62,4 +65,22 @@ export function drawLSystem(p, sentence, angle, palette) {
   }
 
   p.pop();
+}
+
+export function drawGround(p, palette) {
+  const y = p.height - 40;
+  p.noStroke();
+
+  // Ground line
+  p.fill(palette.ground);
+  p.rect(p.width / 2 - 80, y, 160, 3);
+
+  // Moss patches — stamp a few clusters left and right of trunk base
+  const offsets = [-55, -35, -18, 18, 35, 55];
+  for (const dx of offsets) {
+    p.push();
+    p.translate(p.width / 2 + dx, y - 2);
+    stampMoss(p, palette);
+    p.pop();
+  }
 }
