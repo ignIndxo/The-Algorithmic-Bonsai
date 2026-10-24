@@ -1,10 +1,15 @@
 import { LSystem, PRESETS } from './lsystem.js';
+import { drawLSystem }      from './renderer.js';
+import { PALETTES }         from './palette.js';
 
-// Console-verify presets at depth 3
-for (const [key, preset] of Object.entries(PRESETS)) {
-  const ls = new LSystem(preset);
-  const out = ls.generate(3);
-  console.log(`[${key}] depth=3 len=${out.length} preview="${out.slice(0, 60)}..."`);
+let sentence = '';
+let currentPalette = PALETTES.spring;
+let currentPreset  = PRESETS.tree;
+let depth = 5;
+
+function rebuild() {
+  const ls = new LSystem({ ...currentPreset, seed: 42 });
+  sentence = ls.generate(depth);
 }
 
 new p5((p) => {
@@ -12,15 +17,17 @@ new p5((p) => {
     p.createCanvas(p.windowWidth, p.windowHeight);
     p.noSmooth();
     p.pixelDensity(1);
-    p.background('#0e1015');
+    rebuild();
   };
 
   p.draw = function () {
-    // drawing logic added in later phases
+    p.background(currentPalette.bg);
+    drawLSystem(p, sentence, currentPreset.angle, currentPalette);
+    p.noLoop();
   };
 
   p.windowResized = function () {
     p.resizeCanvas(p.windowWidth, p.windowHeight);
-    p.background('#0e1015');
+    p.loop();
   };
 });
