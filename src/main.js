@@ -86,6 +86,17 @@ function applyRandomness(rules, r) {
   return out;
 }
 
+function drawSignature(p, palette) {
+  p.noStroke();
+  p.fill(palette.blossom);
+  p.textFont('Courier New');
+  p.textSize(11);
+  p.textAlign(p.CENTER, p.BOTTOM);
+  p.drawingContext.globalAlpha = 0.45;
+  p.text('kai patel', p.width / 2, p.height - 48);
+  p.drawingContext.globalAlpha = 1;
+}
+
 // ── p5 sketch ─────────────────────────────────────────────────────────────
 new p5((p) => {
   p5instance = p;
@@ -125,6 +136,8 @@ new p5((p) => {
     drawGround(p, currentPalette);
     drawLSystem(p, sentence, angle, currentPalette, cursor);
     updateParticles(p);
+
+    if (!growing) drawSignature(p, currentPalette);
 
     if (!growing && particles.length === 0) p.noLoop();
   };
