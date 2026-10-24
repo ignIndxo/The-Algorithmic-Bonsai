@@ -13,7 +13,7 @@ export function drawLSystem(p, sentence, angle, palette, limit = Infinity) {
   p.push();
   p.translate(p.width / 2, p.height - 40);
 
-  const len = 220 / Math.max(sentence.length, 1) ** 0.45;
+  const len = (p.height * 0.55) / Math.max(sentence.length, 1) ** 0.45;
 
   let depth = 0;
   let maxDepth = 1;
